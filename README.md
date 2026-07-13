@@ -19,7 +19,7 @@
 
 ## Decisões de Projeto
 
-- `tipo` vai na query URL porque é um filtro público de busca.
+- `tipo` vai na query URL pois é um filtro público de busca.
 - `usuario` e `senha` são enviados em JSON porque são dados privados.
 - `/reserva` responde:
   - **201** quando a reserva é realizada com sucesso;

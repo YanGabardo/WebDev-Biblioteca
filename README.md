@@ -1,4 +1,3 @@
-```
 # BookSense — Sistema de Gerenciamento de Biblioteca
 
 O **BookSense** é uma aplicação completa (Full Stack) voltada para o gerenciamento de acervos literários e reservas de livros escolares. O projeto conta com um servidor robusto desenvolvido em Node.js com Express e uma interface web moderna baseada em Glassmorphic Design.
@@ -29,14 +28,11 @@ node app.js
 
 ```
 
-
 4. Abra o seu navegador e acesse a aplicação pelo endereço:
 ```
 http://localhost:3000
 
 ```
-
-
 
 ---
 
@@ -74,8 +70,8 @@ Abaixo estão listados os 9 cenários estruturados que cobrem 100% das respostas
 | **5** | Login com Senha Incorreta | `POST /login` | `{ "usuario": "adm", "senha": "errada" }` | `401 Unauthorized` — Acesso negado. |
 | **6** | Reserva Executada | `POST /reserva` | `{ "id": 4, "aluno": "Mosca" }` | `201 Created` — Deduz estoque e exibe prazo. |
 | **7** | Falha de Validação | `POST /reserva` | `{ "id": 4 }` | `400 Bad Request` — Erro: Aluno obrigatório. |
-| **8** | Livro Não Encontrado | `POST /reserva` | `{ "id": 99, "aluno": "Lucas" }` | `404 Not Found` — ID inexistente no acervo. |
-| **9** | Estoque Insuficiente | `POST /reserva` | `{ "id": 6, "aluno": "Mariana" }` | `400 Bad Request` — Item esgotado (Qtd: 0). |
+| **8** | Livro Não Encontrado | `POST /reserva` | `{ "id": 99, "aluno": "Caio" }` | `404 Not Found` — ID inexistente no acervo. |
+| **9** | Estoque Insuficiente | `POST /reserva` | `{ "id": 6, "aluno": "Yan" }` | `400 Bad Request` — Item esgotado (Qtd: 0). |
 
 ---
 

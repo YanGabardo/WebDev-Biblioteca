@@ -1,0 +1,556 @@
+<!doctype html>
+<html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>BookSense — Dashboard</title>
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+            :root {
+                --bg-dark: #0f172a;
+                --bg-card: rgba(30, 41, 59, 0.7);
+                --primary: #6366f1;
+                --primary-hover: #4f46e5;
+                --text-main: #f8fafc;
+                --text-muted: #94a3b8;
+                --border: rgba(255, 255, 255, 0.1);
+                --danger: #ef4444;
+                --danger-bg: rgba(239, 68, 68, 0.1);
+                --success: #22c55e;
+                --success-bg: rgba(34, 197, 94, 0.1);
+                --accent: #38bdf8;
+            }
+
+            body {
+                font-family: 'Inter', sans-serif;
+                background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+                color: var(--text-main);
+                margin: 0;
+                padding: 40px 20px;
+                display: flex;
+                justify-content: center;
+                min-height: 100vh;
+                -webkit-font-smoothing: antialiased;
+            }
+
+            .container {
+                width: 100%;
+                max-width: 1000px;
+            }
+
+            header {
+                text-align: center;
+                margin-bottom: 40px;
+            }
+
+            h1 {
+                font-size: 2.8rem;
+                font-weight: 800;
+                background: linear-gradient(to right, #818cf8, #38bdf8);
+                -webkit-background-clip: text;
+                background-clip: text;
+                -webkit-text-fill-color: transparent;
+                margin: 0 0 10px 0;
+            }
+
+            .subtitle {
+                color: var(--text-muted);
+                margin: 0;
+                font-size: 1.1rem;
+            }
+
+            /* Alertas */
+            .http-alert {
+                display: none;
+                align-items: center;
+                gap: 14px;
+                padding: 16px 20px;
+                border-radius: 12px;
+                margin-bottom: 24px;
+                font-size: 0.95rem;
+                font-weight: 500;
+                backdrop-filter: blur(10px);
+                border: 1px solid transparent;
+                animation: slideDown 0.3s ease;
+            }
+
+            @keyframes slideDown {
+                from {
+                    opacity: 0;
+                    transform: translateY(-10px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .status-badge {
+                padding: 4px 10px;
+                border-radius: 6px;
+                font-family: monospace;
+                font-weight: 700;
+            }
+
+            .alert-success {
+                background: var(--success-bg);
+                color: #86efac;
+                border-color: rgba(34, 197, 94, 0.2);
+            }
+            .alert-success .status-badge {
+                background: rgba(34, 197, 94, 0.2);
+                color: #4ade80;
+            }
+
+            .alert-error {
+                background: var(--danger-bg);
+                color: #fca5a5;
+                border-color: rgba(239, 68, 68, 0.2);
+            }
+            .alert-error .status-badge {
+                background: rgba(239, 68, 68, 0.2);
+                color: #f87171;
+            }
+
+            /* Cards e Glassmorphism */
+            .card {
+                background: var(--bg-card);
+                backdrop-filter: blur(16px);
+                padding: 35px;
+                border-radius: 20px;
+                border: 1px solid var(--border);
+                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+                margin-bottom: 24px;
+            }
+
+            .card h2 {
+                margin-top: 0;
+                margin-bottom: 24px;
+                font-weight: 600;
+                font-size: 1.5rem;
+            }
+
+            /* Formulários */
+            .form-group {
+                margin-bottom: 20px;
+            }
+            label {
+                display: block;
+                margin-bottom: 8px;
+                font-size: 0.8rem;
+                font-weight: 500;
+                color: var(--text-muted);
+                text-transform: uppercase;
+            }
+
+            input,
+            select {
+                width: 100%;
+                padding: 14px 16px;
+                border: 1px solid var(--border);
+                border-radius: 12px;
+                font-size: 1rem;
+                color: var(--text-main);
+                background-color: rgba(15, 23, 42, 0.5);
+                transition: all 0.2s ease;
+                box-sizing: border-box;
+            }
+
+            input:focus,
+            select:focus {
+                outline: none;
+                border-color: var(--primary);
+                box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
+            }
+
+            button {
+                background-color: var(--primary);
+                color: white;
+                padding: 14px 24px;
+                border: none;
+                border-radius: 12px;
+                cursor: pointer;
+                font-size: 1rem;
+                font-weight: 600;
+                transition: all 0.2s ease;
+                width: 100%;
+            }
+
+            button:hover {
+                background-color: var(--primary-hover);
+                transform: translateY(-1px);
+            }
+
+            .hidden {
+                display: none !important;
+            }
+
+            /* Navegação do Painel */
+            .dashboard-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 24px;
+                border-bottom: 1px solid var(--border);
+                padding-bottom: 20px;
+            }
+
+            .tabs {
+                display: flex;
+                gap: 10px;
+            }
+
+            .tab-btn {
+                background: rgba(99, 102, 241, 0.1);
+                color: var(--primary);
+                border: 1px solid rgba(99, 102, 241, 0.2);
+                width: auto;
+                padding: 10px 20px;
+                border-radius: 8px;
+                cursor: default;
+            }
+
+            .filtro-container {
+                display: flex;
+                gap: 12px;
+                margin-bottom: 28px;
+            }
+            .filtro-container select {
+                width: auto;
+                min-width: 200px;
+            }
+            .filtro-container button {
+                width: auto;
+            }
+
+            /* Tabelas */
+            .table-wrapper {
+                overflow-x: auto;
+            }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                text-align: left;
+            }
+            th,
+            td {
+                padding: 16px;
+                border-bottom: 1px solid var(--border);
+            }
+            th {
+                font-weight: 600;
+                color: var(--text-muted);
+                text-transform: uppercase;
+                font-size: 0.75rem;
+                letter-spacing: 0.05em;
+            }
+            tbody tr {
+                transition: background-color 0.2s;
+            }
+            tbody tr:hover {
+                background-color: rgba(255, 255, 255, 0.02);
+            }
+
+            .btn-action {
+                width: auto;
+                padding: 8px 16px;
+                font-size: 0.85rem;
+                border-radius: 8px;
+            }
+            .btn-reserva {
+                background-color: rgba(99, 102, 241, 0.1);
+                color: #818cf8;
+            }
+            .btn-reserva:hover {
+                background-color: var(--primary);
+                color: white;
+            }
+
+            .input-aluno {
+                padding: 8px 12px;
+                width: 150px;
+            }
+
+            .badge {
+                padding: 6px 12px;
+                border-radius: 20px;
+                font-size: 0.75rem;
+                font-weight: 600;
+                text-transform: uppercase;
+            }
+            .bg-tecnico {
+                background: rgba(56, 189, 248, 0.1);
+                color: #38bdf8;
+            }
+            .bg-literario {
+                background: rgba(245, 158, 11, 0.1);
+                color: #fbbf24;
+            }
+            .bg-infantil {
+                background: rgba(34, 197, 94, 0.1);
+                color: #4ade80;
+            }
+            .bg-estrangeiro {
+                background: rgba(239, 68, 68, 0.1);
+                color: #f87171;
+            }
+
+            .empty-state {
+                text-align: center;
+                padding: 50px 0;
+                color: var(--text-muted);
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <header>
+                <h1>BookSense</h1>
+                <p class="subtitle"></p>
+            </header>
+
+            <div id="http-alert-box" class="http-alert">
+                <span id="alert-status-code" class="status-badge"></span>
+                <span id="alert-text"></span>
+            </div>
+
+            <div id="login-section" class="card" style="max-width: 420px; margin: 0 auto">
+                <h2>Acesso Seguro</h2>
+                <form id="login-form">
+                    <div class="form-group">
+                        <label>Usuário</label>
+                        <input type="text" id="usuario" required placeholder="adm" autocomplete="off" />
+                    </div>
+                    <div class="form-group">
+                        <label>Senha</label>
+                        <input type="password" id="senha" required placeholder="••••••••" />
+                    </div>
+                    <button type="submit">Autenticar</button>
+                </form>
+            </div>
+
+            <div id="main-section" class="hidden">
+                <div class="card">
+                    <div class="dashboard-header">
+                        <div class="tabs">
+                            <button class="tab-btn active">Acervo Geral</button>
+                        </div>
+                        <div>
+                            <span style="color: var(--text-muted); font-size: 0.9rem"
+                                >Olá, <strong id="user-display" style="color: white"></strong
+                            ></span>
+                        </div>
+                    </div>
+
+                    <div id="view-acervo">
+                        <div class="filtro-container">
+                            <select id="filtro-tipo">
+                                <option value="">Todos os Gêneros</option>
+                                <option value="literario">Literário</option>
+                                <option value="infantil">Infantil</option>
+                                <option value="tecnico">Técnico</option>
+                                <option value="estrangeiro">Estrangeiro</option>
+                            </select>
+                            <button id="btn-filtrar">Filtrar Categoria</button>
+                        </div>
+
+                        <div class="table-wrapper">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Título</th>
+                                        <th>Autor</th>
+                                        <th>Categoria</th>
+                                        <th>Estoque</th>
+                                        <th>Aluno (Locação)</th>
+                                        <th>Ação</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabela-livros"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            // Referências do DOM
+            const loginSection = document.getElementById('login-section')
+            const mainSection = document.getElementById('main-section')
+            const loginForm = document.getElementById('login-form')
+
+            // Tabelas e Filtros
+            const tabelaLivros = document.getElementById('tabela-livros')
+            const filtroTipo = document.getElementById('filtro-tipo')
+            const btnFiltrar = document.getElementById('btn-filtrar')
+
+            // Alertas e Usuário
+            const userDisplay = document.getElementById('user-display')
+            const alertBox = document.getElementById('http-alert-box')
+            const alertStatusCode = document.getElementById('alert-status-code')
+            const alertText = document.getElementById('alert-text')
+
+            // --- LÓGICA DE INTERFACE ---
+
+            function exibirMensagemHttp(texto, tipo, statusCode) {
+                alertBox.className = 'http-alert'
+                alertStatusCode.innerText = `HTTP ${statusCode}`
+                alertText.innerText = texto
+                alertBox.classList.add(tipo === 'sucesso' ? 'alert-success' : 'alert-error')
+                alertBox.style.display = 'flex'
+
+                setTimeout(limparMensagemHttp, 5000)
+            }
+
+            function limparMensagemHttp() {
+                alertBox.style.display = 'none'
+                alertBox.className = 'http-alert'
+            }
+
+            // --- COMUNICAÇÃO COM A API ---
+
+            // Login
+            loginForm.addEventListener('submit', async (e) => {
+                e.preventDefault()
+                limparMensagemHttp()
+                const usuario = document.getElementById('usuario').value
+                const senha = document.getElementById('senha').value
+
+                try {
+                    const response = await fetch('/login', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ usuario, senha }),
+                    })
+                    const dados = await response.json()
+
+                    if (response.ok) {
+                        exibirMensagemHttp(dados.mensagem, 'sucesso', response.status)
+                        sessionStorage.setItem('sessaoValida', 'true')
+                        userDisplay.innerText = usuario
+                        loginSection.classList.add('hidden')
+                        mainSection.classList.remove('hidden')
+                        window.history.pushState(null, '', '/livros')
+                        carregarLivros()
+                    } else {
+                        exibirMensagemHttp(dados.erro, 'erro', response.status)
+                    }
+                } catch (erro) {
+                    exibirMensagemHttp('Erro interno de conexão.', 'erro', 500)
+                }
+            })
+
+            // Filtro de Livros
+            btnFiltrar.addEventListener('click', () => carregarLivros(filtroTipo.value))
+
+            // Carregar Acervo Geral
+            async function carregarLivros(tipo = '') {
+                try {
+                    let urlFetch = '/livros'
+                    let urlNavegador = '/livros'
+
+                    if (tipo) {
+                        urlFetch += `?tipo=${tipo}`
+                        urlNavegador += `?tipo=${tipo}`
+                    }
+
+                    window.history.pushState(null, '', urlNavegador)
+
+                    const response = await fetch(urlFetch, {
+                        headers: { 'Accept': 'application/json' }
+                    })
+                    const livros = await response.json()
+
+                    tabelaLivros.innerHTML = ''
+
+                    if (livros.length === 0) {
+                        tabelaLivros.innerHTML = `<tr><td colspan="6" class="empty-state">Nenhum livro encontrado nesta categoria.</td></tr>`
+                        return
+                    }
+
+                    livros.forEach((livro, index) => {
+                        const tr = document.createElement('tr')
+
+                        tr.innerHTML = `
+                            <td style="color: white; font-weight: 500;">${livro.nome}</td>
+                            <td>${livro.autor}</td>
+                            <td><span class="badge bg-${livro.tipo}">${livro.tipo}</span></td>
+                            <td><strong style="color: ${livro.quantidade > 0 ? '#4ade80' : '#f87171'}">${livro.quantidade}</strong> un.</td>
+                            <td>
+                                <input type="text" id="aluno-input-${index}" class="input-aluno" placeholder="Nome do Aluno">
+                            </td>
+                            <td>
+                                <button class="btn-action btn-reserva" onclick="reservarLivro(${livro.id}, ${index})">
+                                    Reservar
+                                </button>
+                            </td>
+                        `
+                        tabelaLivros.appendChild(tr)
+                    })
+                } catch (erro) {
+                    exibirMensagemHttp('Falha ao carregar o acervo.', 'erro', 500)
+                }
+            }
+
+            // Fazer Reserva
+            async function reservarLivro(idLivro, indexInput) {
+                limparMensagemHttp()
+                const inputAluno = document.getElementById(`aluno-input-${indexInput}`)
+                const aluno = inputAluno ? inputAluno.value.trim() : ''
+
+                if (!aluno) {
+                    exibirMensagemHttp('Digite o nome do aluno antes de reservar.', 'erro', 400)
+                    return
+                }
+
+                try {
+                    const response = await fetch('/reserva', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ id: idLivro, aluno: aluno }),
+                    })
+
+                    const dados = await response.json()
+
+                    if (response.ok) {
+                        exibirMensagemHttp(
+                            `Sucesso! Devolução agendada para: ${dados.prazoDevolucao}.`,
+                            'sucesso',
+                            response.status,
+                        )
+                        carregarLivros(filtroTipo.value)
+                    } else {
+                        exibirMensagemHttp(dados.erro, 'erro', response.status)
+                    }
+                } catch (erro) {
+                    exibirMensagemHttp('Falha na comunicação ao tentar reservar.', 'erro', 500)
+                }
+            }
+
+            // Verifica Sessão ao Abrir a Página
+            if (sessionStorage.getItem('sessaoValida') === 'true') {
+                userDisplay.innerText = 'Administrador'
+                loginSection.classList.add('hidden')
+                mainSection.classList.remove('hidden')
+
+                if (window.location.pathname === '/' || window.location.pathname === '/login') {
+                    window.history.pushState(null, '', '/livros')
+                }
+
+                const urlParams = new URLSearchParams(window.location.search)
+                const tipoUrl = urlParams.get('tipo')
+                if (tipoUrl) {
+                    filtroTipo.value = tipoUrl
+                }
+
+                carregarLivros(filtroTipo.value)
+            } else {
+                if (window.location.pathname !== '/login') {
+                    window.history.pushState(null, '', '/login')
+                }
+            }
+        </script>
+    </body>
+</html>

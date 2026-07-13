@@ -1,0 +1,23 @@
+{
+  "name": "webdev-biblioteca",
+  "version": "1.0.0",
+  "description": "- Caio Augusto Faria Machado\r - Iury Gonçalves de Souza\r - Yan Gabardo Souza",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YanGabardo/WebDev-Biblioteca.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/YanGabardo/WebDev-Biblioteca/issues"
+  },
+  "homepage": "https://github.com/YanGabardo/WebDev-Biblioteca#readme",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}

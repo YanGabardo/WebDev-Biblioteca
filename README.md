@@ -2,7 +2,7 @@
 
 ## BookSense
 
-O **BookSense** é uma aplicação completa (Full Stack) voltada para o gerenciamento de acervos literários e reservas de livros escolares. O projeto conta com um servidor robusto desenvolvido em Node.js com Express e uma interface web moderna baseada em Glassmorphic Design.
+O **BookSense** é uma aplicação completa (Full Stack) voltada para o gerenciamento de acervos literários e reservas de livros escolares. O projeto conta com um servidor robusto desenvolvido em Node.js com Express e uma interface web moderna.
 
 ### Equipe
 - Caio Augusto Faria Machado
@@ -48,7 +48,7 @@ http://localhost:3000
 | **GET** | `/` | — | Página HTML | `200` | Renderiza a tela inicial/Login. |
 | **GET** | `/livros` | `tipo` (query URL) | Lista em JSON ou HTML | `200` / `401` | Retorna o acervo ou barra o acesso se deslogado. |
 | **POST** | `/login` | `usuario`, `senha` (Body JSON) | OK / Erro | `200` / `401` | Autentica o usuário administrador. |
-| **POST** | `/reserva` | `id`, `aluno` (Body JSON) | Confirmação | `201` / `400` / `404` | Deduz uma unidade do acervo e agenda o prazo. |
+| **POST** | `/reserva` | `id`, `aluno` (Body JSON) | Confirmação | `201` / `400` / `404` | Reduz uma unidade do acervo e agenda o prazo. |
 
 ---
 
@@ -87,8 +87,8 @@ Os testes abaixo cobrem todas as respostas previstas pelo contrato da API e est�
 | **5** | Login inválido | `POST /login` | `{ "usuario": "adm", "senha": "errada" }` | `401` — Credenciais inválidas. |
 | **6** | Reserva com sucesso | `POST /reserva` | `{ "id": 4, "aluno": "Mosca" }` | `201` — Estoque reduzido em 1 unidade. |
 | **7** | Reserva sem aluno | `POST /reserva` | `{ "id": 4 }` | `400` — Erro de validação. |
-| **8** | Livro inexistente | `POST /reserva` | `{ "id": 99, "aluno": "Lucas" }` | `404` — Livro não encontrado. |
-| **9** | Livro esgotado | `POST /reserva` | `{ "id": 6, "aluno": "Mariana" }` | `400` — Estoque insuficiente. |
+| **8** | Livro inexistente | `POST /reserva` | `{ "id": 99, "aluno": "Caio" }` | `404` — Livro não encontrado. |
+| **9** | Livro esgotado | `POST /reserva` | `{ "id": 6, "aluno": "Yan" }` | `400` — Estoque insuficiente. |
 
 ---
 

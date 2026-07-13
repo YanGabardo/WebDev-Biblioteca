@@ -1,4 +1,4 @@
-```markdown
+```
 # BookSense — Sistema de Gerenciamento de Biblioteca
 
 O **BookSense** é uma aplicação completa (Full Stack) voltada para o gerenciamento de acervos literários e reservas de livros escolares. O projeto conta com um servidor robusto desenvolvido em Node.js com Express e uma interface web moderna baseada em Glassmorphic Design.
@@ -13,7 +13,7 @@ O **BookSense** é uma aplicação completa (Full Stack) voltada para o gerencia
 ## 🚀 Como Executar o Projeto Localmente
 
 ### Pré-requisitos
-Certifique-se de ter o [Node.js](https://nodejs.org/) instalado em sua máquina.
+Certifique-se de ter o [Node.js](https://nodejs.org/) instalado.
 
 ### Passo a Passo
 1. Baixe os arquivos do repositório (`app.js`, `index.html` e `BookSense.postman_collection.json`) para uma mesma pasta no seu computador.

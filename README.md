@@ -2,53 +2,111 @@
 
 ## BookSense
 
+O **BookSense** é uma aplicação completa (Full Stack) voltada para o gerenciamento de acervos literários e reservas de livros escolares. O projeto conta com um servidor robusto desenvolvido em Node.js com Express e uma interface web moderna baseada em Glassmorphic Design.
+
 ### Equipe
-- [cite_start]Caio Augusto Faria Machado [cite: 18]
-- [cite_start]Iury Gonçalves de Souza [cite: 19]
-- [cite_start]Yan Gabardo Souza [cite: 19]
+- Caio Augusto Faria Machado
+- Iury Gonçalves de Souza
+- Yan Gabardo Souza
 
 ---
 
-## 🛣️ Endpoints
+# 🚀 Como Executar o Projeto Localmente
 
-| Método | Endpoint | Entrada | Resposta | Status |
-|:-------:|:--------|:---------|:----------|:------:|
-| GET | `/` | — | Página HTML | [cite_start]`200` [cite: 20] |
-| GET | `/livros` | `tipo` (query URL) | Lista em JSON | [cite_start]`200` [cite: 20] |
-| POST | `/login` | `usuario`, `senha` (body JSON) | OK / Erro | [cite_start]`200` / `401` [cite: 20] |
-| POST | `/reserva` | `id`, `aluno` (body JSON) | Confirmação | [cite_start]`201` / `400` / `404` [cite: 20] |
+## Pré-requisitos
 
----
+Certifique-se de ter o Node.js instalado.
 
-## 🧠 Decisões de Projeto
+## Passo a Passo
 
-- [cite_start]**Filtros Públicos:** O parâmetro `tipo` é enviado na query URL porque funciona como um filtro público de busca no acervo[cite: 22].
-- [cite_start]**Dados Privados:** Os campos `usuario` e `senha` são enviados no corpo (body) da requisição em formato JSON por motivos de segurança e privacidade[cite: 24].
-- **Respostas de Reserva (`/reserva`):**
-  - [cite_start]**201:** Quando a reserva é realizada com sucesso (reduzindo o estoque do livro em 1 unidade)[cite: 25, 28].
-  - [cite_start]**400:** Quando o livro existe, mas já está sem estoque/reservado, ou quando há erro de validação (como a ausência do nome do aluno)[cite: 25, 28].
-  - [cite_start]**404:** Quando o identificador (`id`) do livro não corresponde a nenhum item existente no acervo[cite: 25, 28].
-- **Segurança de Sessão e Volatilidade:** - O sistema usa uma variável lógica global de controle (`logado`) que inicia estritamente como `false`.
-  - [cite_start]Todos os dados do acervo e estados de autenticação são guardados exclusivamente em um vetor na memória RAM do servidor[cite: 26]. **Sendo assim, toda vez que o servidor for reiniciado, os dados de estoque voltam ao padrão e o usuário precisará fazer login novamente.**
+1. Clone ou baixe os arquivos do repositório.
 
----
+2. Abra o terminal na pasta do projeto e instale as dependências:
 
-## 🧪 Casos de Teste
+```bash
+npm install express
+```
 
-| # | Requisição | Resultado Esperado |
-|:-:|:-----------|:-------------------|
-| 1 | `GET /livros` | [cite_start]`200` — Lista completa (9 itens). [cite: 28] |
-| 2 | `GET /livros?tipo=infantil` | [cite_start]`200` — Apenas os 3 livros infantis. [cite: 28] |
-| 3 | `GET /livros?tipo=estrangeiro` | [cite_start]`200` — Lista vazia `[]`. [cite: 28] |
-| 4 | `POST /login` com `adm / booksense123` | [cite_start]`200` — Login realizado com sucesso. [cite: 28] |
-| 5 | `POST /login` com senha incorreta | [cite_start]`401` — Erro de autenticação. [cite: 28] |
-| 6 | `POST /reserva` com `{ "id": 4, "aluno": "Mosca" }` | [cite_start]`201` — "Diário de um Banana" reduz o estoque em 1 unidade. [cite: 28] |
-| 7 | `POST /reserva` sem o campo `aluno` | [cite_start]`400` — Erro de validação. [cite: 28] |
-| 8 | `POST /reserva` com `{ "id": 99, ... }` | [cite_start]`404` — Livro não encontrado. [cite: 28] |
-| 9 | `POST /reserva` com `{ "id": 6, ... }` | [cite_start]`400` — Estoque insuficiente. [cite: 28] |
+3. Inicie o servidor:
+
+```bash
+node app.js
+```
+
+4. Abra o navegador e acesse:
+
+```text
+http://localhost:3000
+```
 
 ---
 
-## 📬 Homologação com Postman
+# 🛣️ Endpoints (Especificação da API)
 
-O repositório inclui o arquivo `BookSense.postman_collection.json`. Ele contém a coleção completa mapeada exatamente com os 9 casos de teste listados acima (configurados com os métodos corretos de POST/GET, payloads e headers). Basta importá-lo no Postman para executar os testes locais.
+| Método | Endpoint | Entrada | Resposta | Status | Descrição |
+|--------|----------|----------|-----------|---------|-----------|
+| **GET** | `/` | — | Página HTML | `200` | Renderiza a tela inicial/Login. |
+| **GET** | `/livros` | `tipo` (query URL) | Lista em JSON ou HTML | `200` / `401` | Retorna o acervo ou barra o acesso se deslogado. |
+| **POST** | `/login` | `usuario`, `senha` (Body JSON) | OK / Erro | `200` / `401` | Autentica o usuário administrador. |
+| **POST** | `/reserva` | `id`, `aluno` (Body JSON) | Confirmação | `201` / `400` / `404` | Deduz uma unidade do acervo e agenda o prazo. |
+
+---
+
+# 🧠 Decisões de Projeto e Regras de Negócio
+
+- **Filtros Públicos:** O parâmetro `tipo` é enviado pela Query String da URL, pois representa um filtro público de consulta ao acervo.
+
+- **Dados Privados:** Os campos `usuario` e `senha` são enviados exclusivamente pelo corpo da requisição (Body) em formato JSON, evitando exposição na URL.
+
+### Respostas da rota `/reserva`
+
+- **201 Created:** Reserva realizada com sucesso e o estoque do livro é reduzido em 1 unidade.
+- **400 Bad Request:** Livro sem estoque ou erro de validação (como ausência do nome do aluno).
+- **404 Not Found:** O ID informado não corresponde a nenhum livro cadastrado.
+
+### Segurança e Persistência
+
+- O acesso direto à rota `/livros` é protegido por uma variável global `logado`, iniciada como `false`. Caso não exista autenticação prévia, o servidor retorna erro de acesso.
+
+- Todos os dados da aplicação permanecem apenas na memória RAM do processo Node.js. Portanto, sempre que o servidor for reiniciado:
+  - o estoque dos livros volta ao estado inicial;
+  - o usuário deverá realizar login novamente.
+
+---
+
+# 🧪 Casos de Teste Homologados
+
+Os testes abaixo cobrem todas as respostas previstas pelo contrato da API e estão disponíveis na coleção **BookSense.postman_collection.json**.
+
+| # | Requisição | Método / Rota | Payload | Resultado Esperado |
+|---|------------|---------------|---------|--------------------|
+| **1** | Listar livros | `GET /livros` | — | `200` — Lista completa com 9 livros. |
+| **2** | Filtrar por tipo | `GET /livros?tipo=infantil` | `?tipo=infantil` | `200` — Retorna apenas os livros infantis. |
+| **3** | Filtro inexistente | `GET /livros?tipo=estrangeiro` | `?tipo=estrangeiro` | `200` — Retorna lista vazia `[]`. |
+| **4** | Login válido | `POST /login` | `{ "usuario": "adm", "senha": "booksense123" }` | `200` — Login realizado com sucesso. |
+| **5** | Login inválido | `POST /login` | `{ "usuario": "adm", "senha": "errada" }` | `401` — Credenciais inválidas. |
+| **6** | Reserva com sucesso | `POST /reserva` | `{ "id": 4, "aluno": "Mosca" }` | `201` — Estoque reduzido em 1 unidade. |
+| **7** | Reserva sem aluno | `POST /reserva` | `{ "id": 4 }` | `400` — Erro de validação. |
+| **8** | Livro inexistente | `POST /reserva` | `{ "id": 99, "aluno": "Lucas" }` | `404` — Livro não encontrado. |
+| **9** | Livro esgotado | `POST /reserva` | `{ "id": 6, "aluno": "Mariana" }` | `400` — Estoque insuficiente. |
+
+---
+
+# 📬 Homologação com Postman
+
+A coleção de testes está disponível no diretório raiz do projeto.
+
+## Como importar
+
+1. Abra o **Postman**.
+2. Clique em **Import**.
+3. Selecione o arquivo:
+
+```text
+BookSense.postman_collection.json
+```
+
+4. Todos os nove cenários de teste estarão prontos para execução, incluindo:
+   - métodos GET e POST;
+   - cabeçalhos (Headers);
+   - corpos (Body) em formato JSON.
